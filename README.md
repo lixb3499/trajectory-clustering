@@ -1,5 +1,9 @@
 # Comparing Trajectory Clustering Methods
 
+## Update by lxb(Dec 2022)
+
+My project use the program in [mydata.py](mydata.py) ,and the data file is [outdata](outdata) .
+
 ## Update (Feb 2022)
 
 If you have a problem downloading the public dataset described in the demo file, please try [this link](https://seljuk.me/upload/CVRR_dataset_trajectory_clustering.zip).

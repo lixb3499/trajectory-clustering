@@ -49,11 +49,13 @@ root = ".\outdata"
 dirs = os.listdir(root)
 traj_lst = []
 for dir in dirs:
-    path = os.path.join(root,dir,"left.csv")
-    print(path)
-    df = pd.read_csv(path)
-    df_x = df['x'];df_y = df['y']
-    traj = [[df_x[i],df_y[i]] for i in range(len(df_x))]
+    pathleft = os.path.join(root,dir,"left.csv")
+    pathright = os.path.join(root,dir,"right.csv")
+    print(pathleft)
+    leftdf = pd.read_csv(pathleft);rightdf = pd.read_csv(pathright)
+    leftdf_x = leftdf['x'];leftdf_y = leftdf['y']
+    rightdf_x = rightdf['x'];rightdf_y = rightdf['y']
+    traj = [[leftdf_x[i],leftdf_y[i],rightdf_x[i],rightdf_y[i]] for i in range(min(len(leftdf_x),len(rightdf_x)))]
     traj = np.array(traj)
     traj_lst.append(traj)
 for traj in traj_lst:
@@ -63,23 +65,23 @@ plt.show()
 # print(root) 
 
 degree_threshold = 5
+######轨迹压缩
+# for traj_index, traj in enumerate(traj_lst):
 
-for traj_index, traj in enumerate(traj_lst):
+#     hold_index_lst = []
+#     previous_azimuth = 1000
 
-    hold_index_lst = []
-    previous_azimuth = 1000
+#     for point_index, point in enumerate(traj[:-1]):
+#         next_point = traj[point_index + 1]
+#         diff_vector = next_point - point
+#         azimuth = (math.degrees(math.atan2(*diff_vector)) + 360) % 360
 
-    for point_index, point in enumerate(traj[:-1]):
-        next_point = traj[point_index + 1]
-        diff_vector = next_point - point
-        azimuth = (math.degrees(math.atan2(*diff_vector)) + 360) % 360
+#         if abs(azimuth - previous_azimuth) > degree_threshold:
+#             hold_index_lst.append(point_index)
+#             previous_azimuth = azimuth
+#     hold_index_lst.append(traj.shape[0] - 1)  # Last point of trajectory is always added
 
-        if abs(azimuth - previous_azimuth) > degree_threshold:
-            hold_index_lst.append(point_index)
-            previous_azimuth = azimuth
-    hold_index_lst.append(traj.shape[0] - 1)  # Last point of trajectory is always added
-
-    traj_lst[traj_index] = traj[hold_index_lst, :]
+#     traj_lst[traj_index] = traj[hold_index_lst, :]
 
 def hausdorff( u, v):
     d = max(directed_hausdorff(u, v)[0], directed_hausdorff(v, u)[0])
@@ -113,7 +115,7 @@ for i in range(traj_count):
 
 # 4.2 - dbscan
 
-mdl = DBSCAN(eps=0.4  , min_samples=1)
+mdl = DBSCAN(eps=0.65  , min_samples=1)
 cluster_lst = mdl.fit_predict(D)
 
 plot_cluster(traj_lst, cluster_lst)
